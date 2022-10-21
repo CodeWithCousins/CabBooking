@@ -100,6 +100,13 @@ public class Cab extends HttpServlet {
 			CabHandler cabHandler = new CabHandler();
 			try {
 				res = cabHandler.BookCab(travelDetails.getInt("custId"), travelDetails.getInt("id"), travelDetails.getString("from"), travelDetails.getString("to"), travelDetails.getString("date"));
+				
+				if(res != 0)
+				{
+					resObject.put("status", "success");
+					resObject.put("travelNo", res);
+				}
+				
 			} catch (SQLException | JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -107,16 +114,8 @@ public class Cab extends HttpServlet {
 			
 		}
 		
-		if(res != 0)
-		{
-			try {
-				resObject.put("status", "success");
-			} catch (JSONException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		else {
+	
+		if(res == 0) {
 			try {
 				resObject.put("status", "error");
 			} catch (JSONException e) {

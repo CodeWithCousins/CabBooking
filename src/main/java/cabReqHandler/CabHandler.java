@@ -210,7 +210,7 @@ public class CabHandler {
 
 	public int BookCab(int custId, int id, String from, String to, String dateStr) throws SQLException
 	{
-		int drivId =0, pricePerKm = 0,res = 0;
+		int drivId =0, pricePerKm = 0,travelNo = 0;
 		Connection con = SqlConnector.ConnectDb();
 		con.setAutoCommit(false);
 		try {
@@ -238,14 +238,23 @@ public class CabHandler {
 				ps2.setDate(4, date);
 				ps2.setInt(5, custId);
 				ps2.setInt(6, pricePerKm*km);
-				res = ps2.executeUpdate();
+				ps2.executeUpdate();
 				con.commit();
+				
+				PreparedStatement ps3 = con.prepareStatement("select * from TravelRecords where driverId = ? order by travelNo desc limit 1");
+				ps3.setInt(1, id);
+				ResultSet rs1 = ps3.executeQuery();
+				while (rs1.next()) {
+					travelNo = rs1.getInt("travelNo");
+				}
 			}
 		}catch (SQLException e) {
 			// TODO Auto-generated catch block
 			con.rollback();
 		}
-		return res;
+		
+		
+		return travelNo;
 	}
 	
 	public int UpdateStatus(int id) throws SQLException
@@ -254,15 +263,18 @@ public class CabHandler {
 		Connection con = SqlConnector.ConnectDb();
 		PreparedStatement ps = con.prepareStatement("update drivers set status = \"available\" where id = ?");
 		ps.setInt(1, id);
+		ps.executeUpdate();
 		
-		res = ps.executeUpdate();
-		
+		PreparedStatement ps1 = con.prepareStatement("update TravelRecords set status = \"completed\" where id = ?");
+		ps1.setInt(1, id);
+		res = ps1.executeUpdate();
 		return res;
 	}
 	
 	public int CancelCab(int travelNo) throws SQLException
 	{
 		int res = 0;
+		int driverId = 0;
 		Connection con = SqlConnector.ConnectDb();
 		PreparedStatement ps = con.prepareStatement("update TravelRecords set status = \"cancelled\" where travelNo = ?");
 		
@@ -270,6 +282,18 @@ public class CabHandler {
 		
 		res = ps.executeUpdate();
 		
+		PreparedStatement ps1 = con.prepareStatement("select * from TravelRecords where travelNo = ?");
+		ps1.setInt(1, travelNo);
+		ResultSet rs = ps1.executeQuery();
+		while (rs.next()) {
+			driverId = rs.getInt("driverId");
+		}
+		
+		if(driverId != 0) {
+			PreparedStatement ps2 = con.prepareStatement("update drivers set status = \"available\" where id = ? ");
+			ps2.setInt(1, driverId);
+			ps2.executeUpdate();
+		}
 		return res;
 		
 	}
