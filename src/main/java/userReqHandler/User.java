@@ -55,7 +55,7 @@ public class User extends HttpServlet {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				
+
 				if(result.length() != 0)
 				{
 					try {
@@ -76,7 +76,7 @@ public class User extends HttpServlet {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				
+
 				if(userHistoryDetails.length() != 0)
 				{
 					try {
@@ -86,7 +86,7 @@ public class User extends HttpServlet {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
-					
+
 				}
 			}
 		}
@@ -112,30 +112,33 @@ public class User extends HttpServlet {
 		int result = 0;
 		JSONObject resObject = new JSONObject();
 
-		BufferedReader reader = request.getReader();
-		while ((bodyMsgline = reader.readLine()) != null) {
-			bodyMsg +=bodyMsgline;
-		}
-		JSONObject userDetails = null;
-		try {
-			userDetails = new JSONObject(bodyMsg);
-		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		if(userDetails.has("name") && userDetails.has("phnNo") && userDetails.has("email") && userDetails.has("address"))
-		{
-			UserHandler userHandler = new UserHandler();
-
+		String uri = request.getRequestURI();
+		uri = uri.replace("/api/v0/users","");
+		if(uri.equals("")) {
+			BufferedReader reader = request.getReader();
+			while ((bodyMsgline = reader.readLine()) != null) {
+				bodyMsg +=bodyMsgline;
+			}
+			JSONObject userDetails = null;
 			try {
-				result = userHandler.InsertUser(userDetails.getString("name"), userDetails.getLong("phnNo"), userDetails.getString("email"), userDetails.getString("address"));
-			} catch (SQLException | JSONException e) {
+				userDetails = new JSONObject(bodyMsg);
+			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		}
 
+			if(userDetails.has("name") && userDetails.has("phnNo") && userDetails.has("email") && userDetails.has("address"))
+			{
+				UserHandler userHandler = new UserHandler();
+
+				try {
+					result = userHandler.InsertUser(userDetails.getString("name"), userDetails.getLong("phnNo"), userDetails.getString("email"), userDetails.getString("address"));
+				} catch (SQLException | JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
 		if(result != 0)
 		{
 			try {
@@ -165,69 +168,71 @@ public class User extends HttpServlet {
 		String bodyMsg = "";
 		int result = 0;
 		JSONObject resObject = new JSONObject();
-
-		BufferedReader reader = request.getReader();
-		while ((bodyMsgline = reader.readLine()) != null) {
-			bodyMsg +=bodyMsgline;
-		}
-		JSONObject userDetails = null;
-		try {
-			userDetails = new JSONObject(bodyMsg);
-		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		String name ="", email = "", address="";
-		long phnNo = 0;
-		if(userDetails.has("id") )
-		{
-			UserHandler userHandler = new UserHandler();
-
-
-			if(userDetails.has("name"))
-			{
-				try {
-					name = userDetails.getString("name");
-				} catch (JSONException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+		String uri = request.getRequestURI();
+		uri = uri.replace("/api/v0/users","");
+		if(uri.equals("")) {
+			BufferedReader reader = request.getReader();
+			while ((bodyMsgline = reader.readLine()) != null) {
+				bodyMsg +=bodyMsgline;
 			}
-			if(userDetails.has("phnNo"))
-			{
-				try {
-					phnNo = userDetails.getLong("phnNo");
-				} catch (JSONException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-			if(userDetails.has("email"))
-			{
-				try {
-					email = userDetails.getString("email");
-				} catch (JSONException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-			if(userDetails.has("address"))
-			{
-				try {
-					address = userDetails.getString("address");
-				} catch (JSONException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
+			JSONObject userDetails = null;
 			try {
-				result = userHandler.UpdateUser(userDetails.getInt("id"), name, phnNo, email, address);
-			} catch (SQLException | JSONException e) {
+				userDetails = new JSONObject(bodyMsg);
+			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		}
+			String name ="", email = "", address="";
+			long phnNo = 0;
+			if(userDetails.has("id") )
+			{
+				UserHandler userHandler = new UserHandler();
 
+
+				if(userDetails.has("name"))
+				{
+					try {
+						name = userDetails.getString("name");
+					} catch (JSONException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+				if(userDetails.has("phnNo"))
+				{
+					try {
+						phnNo = userDetails.getLong("phnNo");
+					} catch (JSONException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+				if(userDetails.has("email"))
+				{
+					try {
+						email = userDetails.getString("email");
+					} catch (JSONException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+				if(userDetails.has("address"))
+				{
+					try {
+						address = userDetails.getString("address");
+					} catch (JSONException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+				try {
+					result = userHandler.UpdateUser(userDetails.getInt("id"), name, phnNo, email, address);
+				} catch (SQLException | JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
 		if(result != 0)
 		{
 			try {
@@ -255,31 +260,33 @@ public class User extends HttpServlet {
 		String bodyMsg = "";
 		int result = 0;
 		JSONObject resObject = new JSONObject();
-
-		BufferedReader reader = request.getReader();
-		while ((bodyMsgline = reader.readLine()) != null) {
-			bodyMsg +=bodyMsgline;
-		}
-		JSONObject userDetails = null;
-		try {
-			userDetails = new JSONObject(bodyMsg);
-		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		if(userDetails.has("id") )
-		{
-			UserHandler userHandler = new UserHandler();
-
+		String uri = request.getRequestURI();
+		uri = uri.replace("/api/v0/users","");
+		if(uri.equals("")) {
+			BufferedReader reader = request.getReader();
+			while ((bodyMsgline = reader.readLine()) != null) {
+				bodyMsg +=bodyMsgline;
+			}
+			JSONObject userDetails = null;
 			try {
-				result = userHandler.DeleteUser(userDetails.getInt("id"));
-			} catch (SQLException | JSONException e) {
+				userDetails = new JSONObject(bodyMsg);
+			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		}
 
+			if(userDetails.has("id") )
+			{
+				UserHandler userHandler = new UserHandler();
+
+				try {
+					result = userHandler.DeleteUser(userDetails.getInt("id"));
+				} catch (SQLException | JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
 		if(result != 0)
 		{
 			try {
